@@ -4,7 +4,7 @@ import { createContext, useContext, useRef, useState, type ReactNode } from 'rea
 import {
   Activity, BadgeCheck, BarChart3, Bell, BookOpen, BriefcaseBusiness, Building2,
   CalendarDays, Check, ChevronRight, CircleDollarSign, ClipboardCheck, Clock3,
-  Cloud, FileCheck2, FileText, FolderKanban, Gem, GraduationCap, Headphones,
+  Cloud, Coins, FileCheck2, FileText, Flame, FolderKanban, Gem, Gift, GraduationCap, Headphones,
   HeartHandshake, Home, Landmark, LockKeyhole, Megaphone, MessageCircleMore,
   PackageSearch, PieChart, Search, Settings2, ShieldCheck, Sparkles, Star,
   Target, TrendingUp, UserRound, UserRoundPlus, UsersRound, WalletCards,
@@ -116,8 +116,25 @@ function Course({icon:Icon,title,sub,pct,tag,gray=false,green=false}:{icon:IconT
 
 function MemberCenter() {
   const { go } = useApp();
-  const manage:[IconType,string][]=[[CalendarDays,'我的日程'],[WalletCards,'我的財務'],[FileText,'我的合約'],[ClipboardCheck,'我的審批'],[GraduationCap,'我的學習'],[UsersRound,'我的客戶'],[Star,'我的收藏'],[Clock3,'考勤打卡']];
-  return <Phone dark nav={<BottomNav items={advisorNav} active={4} dark routes={{首頁:2,學院:6,業務:1,社群:5,我的:7}}/>}><div className="member-top"><b>我的</b><Settings2 size={18}/></div><div className="vip-card"><div className="vip-head"><div><b>陳小姐</b><small>NO. AA0000728</small></div><Tag tone="gold">DIAMOND VIP</Tag></div><h2>家辦 AI 陪跑權限已開通</h2><p>有效期至 2026-09-20</p><div className="vip-actions"><button>立即升級</button><button>會員權益</button></div><Gem size={104}/></div><SectionTitle>我的管理</SectionTitle><GridMenu items={manage} routes={{我的學習:6,我的合約:4}}/><SectionTitle>AI 陪跑</SectionTitle><button className="dark-link" onClick={()=>go(3)}><Halo/><div><b>進入 AI 陪跑首頁</b><small>今日已為你生成 4 條建議</small></div><ChevronRight size={16}/></button><SectionTitle>系統設置</SectionTitle><div className="dark-list"><DarkRow icon={LockKeyhole} label="權限與角色"/><DarkRow icon={Bell} label="通知設定"/><DarkRow icon={Cloud} label="語言與地區"/><DarkRow icon={Headphones} label="聯絡客服"/></div></Phone>;
+  const manage:[IconType,string][]=[[CalendarDays,'我的日程'],[WalletCards,'我的財務'],[FileText,'我的合約'],[ClipboardCheck,'我的審批'],[GraduationCap,'我的學習'],[UsersRound,'我的客戶'],[Star,'我的收藏'],[Flame,'每日打卡']];
+  return <Phone dark nav={<BottomNav items={advisorNav} active={4} dark routes={{首頁:2,學院:6,業務:1,社群:5,我的:7}}/>}><div className="member-top"><b>我的</b><Settings2 size={18}/></div><div className="vip-card"><div className="vip-head"><div><b>陳小姐</b><small>NO. AA0000728</small></div><Tag tone="gold">DIAMOND VIP</Tag></div><h2>家辦 AI 陪跑權限已開通</h2><p>有效期至 2026-09-20</p><div className="vip-actions"><button>立即升級</button><button>會員權益</button></div><Gem size={104}/></div><SectionTitle>我的管理</SectionTitle><GridMenu items={manage} routes={{我的學習:6,我的合約:4,每日打卡:8}}/><SectionTitle>AI 陪跑</SectionTitle><button className="dark-link" onClick={()=>go(3)}><Halo/><div><b>進入 AI 陪跑首頁</b><small>今日已為你生成 4 條建議</small></div><ChevronRight size={16}/></button><SectionTitle>系統設置</SectionTitle><div className="dark-list"><DarkRow icon={LockKeyhole} label="權限與角色"/><DarkRow icon={Bell} label="通知設定"/><DarkRow icon={Cloud} label="語言與地區"/><DarkRow icon={Headphones} label="聯絡客服"/></div></Phone>;
+}
+
+function DailyCheckIn() {
+  const { notify } = useApp();
+  const [checked,setChecked] = useState(false);
+  const checkedDays = new Set([2,5,8,10,14,17,19,21,24,25,26,27,28,29]);
+  const checkIn = () => {
+    if (checked) return notify('今天已经打卡，明天再来');
+    setChecked(true);
+    notify('打卡成功，积分 +10');
+  };
+  return <Phone nav={<BottomNav items={advisorNav} active={4} routes={{首頁:2,學院:6,業務:1,社群:5,我的:7}}/>}><Topbar simple title="每日打卡積分"/><div className="checkin-hero"><div className="points-balance"><span><Coins size={15}/>可用積分</span><b>{checked?'1,290':'1,280'}</b><small>本月已獲得 {checked?'190':'180'} 積分</small></div><div className="streak"><Flame size={22}/><b>{checked?'8':'7'} 天</b><small>連續打卡</small></div><button className={checked?'done':''} onClick={checkIn}>{checked?<><Check size={15}/>今日已打卡</>:<><CalendarDays size={15}/>立即打卡 +10</>}</button></div><div className="calendar-card"><div className="calendar-head"><div><b>2026 年 8 月</b><small>已打卡 {checked?'15':'14'} 天</small></div><Tag tone="purple">滿勤再送 100</Tag></div><div className="week-row">{['日','一','二','三','四','五','六'].map(day=><span key={day}>{day}</span>)}</div><div className="calendar-grid">{Array.from({length:31},(_,i)=>i+1).map(day=><span className={`${checkedDays.has(day)?'checked':''} ${day===30?'today':''} ${day===30&&checked?'checked':''}`} key={day}>{checkedDays.has(day)||(day===30&&checked)?<Check size={10}/>:day}</span>)}</div></div><SectionTitle more="積分規則">今日積分任務</SectionTitle><div className="points-tasks"><PointsTask icon={Check} title="每日登入打卡" sub="每天完成 1 次" points="+10" done={checked}/><PointsTask icon={BookOpen} title="完成一節課程" sub="商學院學習滿 15 分鐘" points="+20"/><PointsTask icon={UserRoundPlus} title="跟進一位客戶" sub="更新客戶跟進記錄" points="+15"/><PointsTask icon={Sparkles} title="使用 AI 陪跑" sub="完成一項 AI 建議任務" points="+10"/></div><SectionTitle more="全部禮遇">積分兌換</SectionTitle><div className="reward-grid"><button onClick={()=>notify('需要 2,000 积分兑换')}><span><Gift size={18}/></span><b>課程兌換券</b><small>2,000 積分</small></button><button onClick={()=>notify('需要 3,500 积分兑换')}><span><Gem size={18}/></span><b>VIP 活動席位</b><small>3,500 積分</small></button></div></Phone>;
+}
+
+function PointsTask({icon:Icon,title,sub,points,done=false}:{icon:IconType;title:string;sub:string;points:string;done?:boolean}) {
+  const { notify } = useApp();
+  return <div className="points-task"><span><Icon size={16}/></span><div><b>{title}</b><small>{sub}</small></div><button className={done?'done':''} onClick={()=>notify(done?'任务已完成':`${title}：进入任务`)}>{done?'已完成':points}</button></div>;
 }
 
 function DarkRow({icon:Icon,label}:{icon:IconType;label:string}) { return <div><span><Icon size={16}/></span><b>{label}</b><ChevronRight size={15}/></div>; }
@@ -131,6 +148,7 @@ const screens:ScreenDef[]=[
   { title:'人才招募', eyebrow:'RECRUITMENT PIPELINE', mode:'light', component:Recruitment },
   { title:'培訓商學院', eyebrow:'AA ACADEMY', mode:'light', component:Academy },
   { title:'會員中心', eyebrow:'MEMBER EXPERIENCE', mode:'dark', component:MemberCenter },
+  { title:'每日打卡積分', eyebrow:'DAILY REWARDS', mode:'light', component:DailyCheckIn },
 ];
 
 export default function HomePage(){

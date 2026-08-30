@@ -61,6 +61,7 @@ function Phone({ children, dark=false, nav }:{ children:ReactNode; dark?:boolean
 const companyNav:[IconType,string][]=[[Home,'首頁'],[FolderKanban,'平台'],[TrendingUp,'業務'],[Sparkles,'AI助手'],[UserRound,'我的']];
 const advisorNav:[IconType,string][]=[[Home,'首頁'],[GraduationCap,'學院'],[TrendingUp,'業務'],[UsersRound,'社群'],[UserRound,'我的']];
 const aiNav:[IconType,string][]=[[Home,'首頁'],[MessageCircleMore,'AI陪伴'],[FolderKanban,'工作台'],[PackageSearch,'AI商城'],[UserRound,'我的']];
+const aiWorldNav:[IconType,string][]=[[Sparkles,'AI世界'],[MessageCircleMore,'AI陪伴'],[PackageSearch,'AI工具'],[Gift,'AI商城'],[UserRound,'我的']];
 
 function IdentityScreen() {
   const { go } = useApp();
@@ -140,7 +141,7 @@ function PointsTask({icon:Icon,title,sub,points,done=false}:{icon:IconType;title
 function AIAdCarousel() {
   const { go } = useApp();
   const [slide,setSlide] = useState(0);
-  const touchStart = useRef<number|null>(null);
+  const pointerStart = useRef<{x:number;id:number}|null>(null);
   const ads = [
     { image:'/ads/xiao-a-family-office.jpg', kicker:'AA AI FAMILY OFFICE', title:'小A家辦', copy:'讓每一位保險顧問，都擁有頂級家辦的專業能力' },
     { image:'/ads/ai-insight.png', kicker:'AI CLIENT INSIGHT', title:'AI 客戶洞察', copy:'從家庭目標出發，快速整理需求與下一步跟進方向' },
@@ -148,16 +149,16 @@ function AIAdCarousel() {
   ];
   const move = (direction:number) => setSlide(current=>(current+direction+ads.length)%ads.length);
   const finishSwipe = (x:number) => {
-    if(touchStart.current===null)return;
-    const delta=x-touchStart.current;
+    if(pointerStart.current===null)return;
+    const delta=x-pointerStart.current.x;
     if(Math.abs(delta)>38)move(delta<0?1:-1);
-    touchStart.current=null;
+    pointerStart.current=null;
   };
   const ad=ads[slide];
-  return <Phone dark><div className="ad-world">
-    <div className="ad-world-head"><span><Sparkles size={13}/> AA AI 廣告世界</span><button onClick={()=>go(2)}>返回工作台</button></div>
-    <div className="ad-intro"><p>SWIPE TO DISCOVER</p><h1>遇見你的 AI 家辦搭檔</h1><small>左右滑動，一張一張探索</small></div>
-    <div className="ad-deck" onTouchStart={event=>touchStart.current=event.touches[0].clientX} onTouchEnd={event=>finishSwipe(event.changedTouches[0].clientX)}>
+  return <Phone dark nav={<BottomNav items={aiWorldNav} active={0} dark routes={{AI世界:9,AI陪伴:3,AI工具:2,AI商城:6,我的:7}}/>}><div className="ad-world">
+    <div className="ad-world-head"><span><Sparkles size={13}/> AA AI 世界</span><button onClick={()=>go(0)}>身份入口</button></div>
+    <div className="ad-intro"><p>WELCOME TO THE AI WORLD</p><h1>進入 AA AI 世界</h1><small>遇見另一個你，左右拖動探索廣告內容</small></div>
+    <div className="ad-deck" onPointerDown={event=>{pointerStart.current={x:event.clientX,id:event.pointerId};event.currentTarget.setPointerCapture(event.pointerId)}} onPointerUp={event=>finishSwipe(event.clientX)} onPointerCancel={()=>pointerStart.current=null}>
       <i className="ad-card-shadow shadow-one"/><i className="ad-card-shadow shadow-two"/>
       <article className="ad-card" key={ad.image} style={{backgroundImage:`url(${ad.image})`}}>
         <div className="ad-card-shade"/>
@@ -168,7 +169,6 @@ function AIAdCarousel() {
       <button aria-label="下一張" className="ad-arrow ad-arrow-right" onClick={()=>move(1)}>›</button>
     </div>
     <div className="ad-dots">{ads.map((item,index)=><button aria-label={`第 ${index+1} 張`} className={index===slide?'active':''} onClick={()=>setSlide(index)} key={item.image}/>)}</div>
-    <button className="enter-system" onClick={()=>go(2)}><span><Sparkles size={15}/>返回顧問工作台</span><ChevronRight size={16}/></button>
   </div></Phone>;
 }
 
@@ -188,7 +188,7 @@ const screens:ScreenDef[]=[
 ];
 
 export default function HomePage(){
-  const [active,setActive]=useState(0);
+  const [active,setActive]=useState(9);
   const [history,setHistory]=useState<number[]>([]);
   const [toast,setToast]=useState('');
   const toastTimer=useRef<ReturnType<typeof setTimeout>|null>(null);

@@ -137,6 +137,41 @@ function PointsTask({icon:Icon,title,sub,points,done=false}:{icon:IconType;title
   return <div className="points-task"><span><Icon size={16}/></span><div><b>{title}</b><small>{sub}</small></div><button className={done?'done':''} onClick={()=>notify(done?'任务已完成':`${title}：进入任务`)}>{done?'已完成':points}</button></div>;
 }
 
+function AIAdCarousel() {
+  const { go } = useApp();
+  const [slide,setSlide] = useState(0);
+  const touchStart = useRef<number|null>(null);
+  const ads = [
+    { image:'/ads/xiao-a-family-office.jpg', kicker:'AA AI FAMILY OFFICE', title:'小A家辦', copy:'讓每一位保險顧問，都擁有頂級家辦的專業能力' },
+    { image:'/ads/ai-insight.png', kicker:'AI CLIENT INSIGHT', title:'AI 客戶洞察', copy:'從家庭目標出發，快速整理需求與下一步跟進方向' },
+    { image:'/ads/family-legacy.png', kicker:'FAMILY LEGACY', title:'讓專業陪伴每一代', copy:'把保障、財富與傳承，放進同一張家庭藍圖' },
+  ];
+  const move = (direction:number) => setSlide(current=>(current+direction+ads.length)%ads.length);
+  const finishSwipe = (x:number) => {
+    if(touchStart.current===null)return;
+    const delta=x-touchStart.current;
+    if(Math.abs(delta)>38)move(delta<0?1:-1);
+    touchStart.current=null;
+  };
+  const ad=ads[slide];
+  return <Phone dark><div className="ad-world">
+    <div className="ad-world-head"><span><Sparkles size={13}/> AA AI 廣告世界</span><button onClick={()=>go(0)}>跳過</button></div>
+    <div className="ad-intro"><p>SWIPE TO DISCOVER</p><h1>遇見你的 AI 家辦搭檔</h1><small>左右滑動，一張一張探索</small></div>
+    <div className="ad-deck" onTouchStart={event=>touchStart.current=event.touches[0].clientX} onTouchEnd={event=>finishSwipe(event.changedTouches[0].clientX)}>
+      <i className="ad-card-shadow shadow-one"/><i className="ad-card-shadow shadow-two"/>
+      <article className="ad-card" key={ad.image} style={{backgroundImage:`url(${ad.image})`}}>
+        <div className="ad-card-shade"/>
+        <div className="ad-card-copy"><span>{ad.kicker}</span><h2>{ad.title}</h2><p>{ad.copy}</p></div>
+        <button className="ad-card-cta" onClick={()=>go(0)}>立即體驗 <ChevronRight size={14}/></button>
+      </article>
+      <button aria-label="上一張" className="ad-arrow ad-arrow-left" onClick={()=>move(-1)}>‹</button>
+      <button aria-label="下一張" className="ad-arrow ad-arrow-right" onClick={()=>move(1)}>›</button>
+    </div>
+    <div className="ad-dots">{ads.map((item,index)=><button aria-label={`第 ${index+1} 張`} className={index===slide?'active':''} onClick={()=>setSlide(index)} key={item.image}/>)}</div>
+    <button className="enter-system" onClick={()=>go(0)}><span><Sparkles size={15}/>進入 AA AI 家辦系統</span><ChevronRight size={16}/></button>
+  </div></Phone>;
+}
+
 function DarkRow({icon:Icon,label}:{icon:IconType;label:string}) { return <div><span><Icon size={16}/></span><b>{label}</b><ChevronRight size={15}/></div>; }
 
 const screens:ScreenDef[]=[
@@ -149,10 +184,11 @@ const screens:ScreenDef[]=[
   { title:'培訓商學院', eyebrow:'AA ACADEMY', mode:'light', component:Academy },
   { title:'會員中心', eyebrow:'MEMBER EXPERIENCE', mode:'dark', component:MemberCenter },
   { title:'每日打卡積分', eyebrow:'DAILY REWARDS', mode:'light', component:DailyCheckIn },
+  { title:'AI 廣告世界', eyebrow:'OPENING CAMPAIGN', mode:'dark', component:AIAdCarousel },
 ];
 
 export default function HomePage(){
-  const [active,setActive]=useState(0);
+  const [active,setActive]=useState(9);
   const [history,setHistory]=useState<number[]>([]);
   const [toast,setToast]=useState('');
   const toastTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
@@ -160,5 +196,6 @@ export default function HomePage(){
   const go=(target:number)=>{if(target===active)return;setHistory(items=>[...items,active]);setActive(target);};
   const back=()=>setHistory(items=>{if(!items.length){setActive(0);return items;}const next=[...items];setActive(next.pop()??0);return next;});
   const notify=(message:string)=>{setToast(message);if(toastTimer.current)clearTimeout(toastTimer.current);toastTimer.current=setTimeout(()=>setToast(''),1800);};
-  return <AppContext.Provider value={{go,notify}}><main className="prototype-app"><div className="prototype-brand"><span className="brand-mark"><Sparkles size={17}/></span><div><b>AA AI 家辦超級工作台</b><small>可點擊演示原型 · 所有資料均為示例</small></div></div><section className="prototype-stage"><div className={`prototype-controls ${active===0?'entry':''}`}>{active!==0&&<button onClick={back}>‹ 返回</button>}{active!==0&&<button onClick={()=>{setHistory([]);setActive(0)}}>切換身份</button>}</div><Screen/>{toast&&<div className="prototype-toast"><Check size={14}/>{toast}</div>}</section><p className="prototype-tip">請從身份入口開始，點擊卡片、模組與底部導航體驗流程</p></main></AppContext.Provider>;
+  const isEntry=active===0||active===9;
+  return <AppContext.Provider value={{go,notify}}><main className={`prototype-app ${active===9?'ad-opening':''}`}><div className="prototype-brand"><span className="brand-mark"><Sparkles size={17}/></span><div><b>AA AI 家辦超級工作台</b><small>可點擊演示原型 · 所有資料均為示例</small></div></div><section className="prototype-stage"><div className={`prototype-controls ${isEntry?'entry':''}`}>{!isEntry&&<button onClick={back}>‹ 返回</button>}{!isEntry&&<button onClick={()=>{setHistory([]);setActive(0)}}>切換身份</button>}</div><Screen/>{toast&&<div className="prototype-toast"><Check size={14}/>{toast}</div>}</section><p className="prototype-tip">左右滑動廣告卡片，或進入系統點擊各個功能體驗流程</p></main></AppContext.Provider>;
 }

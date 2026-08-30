@@ -86,7 +86,7 @@ function ProgressRing({value,label='完成率'}:{value:number;label?:string}) { 
 function AdvisorHome() {
   const { go } = useApp();
   const tools:[IconType,string][]=[[PackageSearch,'產品資料'],[PieChart,'產品對比'],[CircleDollarSign,'保費試算'],[Activity,'客戶診斷'],[Megaphone,'營銷工具'],[GraduationCap,'培訓學院'],[FileCheck2,'計劃書'],[Sparkles,'AI成交陪跑']];
-  return <Phone nav={<BottomNav items={advisorNav} routes={{首頁:2,學院:6,業務:1,社群:5,我的:7}}/>}><Topbar title="陳小姐　·　鑽石顧問" subtitle="卓越團隊 · 家辦顧問" initial="陳"/><div className="kpi-card"><ProgressRing value={64}/><div className="kpi-copy"><small>本月業務目標</small><h2>HKD 3,200,000</h2><p>/ 5,000,000</p><div className="progress"><i style={{width:'64%'}}/></div><div className="mini-metrics"><span>新客戶 <b>48</b></span><span>有效面談 <b>31</b></span><span>成交 <b>7</b></span></div></div></div><SectionTitle more="全部">今日任務</SectionTitle><Suggestion compact><b>AI 建議：</b>優先跟進 5 位高意向客戶，其中 2 位計劃書已逾 3 天未回覆。</Suggestion><div className="list-card"><List icon={Headphones} title="跟進客戶 · 黃先生" sub="教育金規劃 · 二次面談" tag="進行中"/><List icon={FileCheck2} title="遞交計劃書 · 李太太" sub="高端醫療 + 儲蓄型組合" tag="待處理" gray/><List icon={CalendarDays} title="家辦財富傳承閉門會" sub="10月18日 · 中環 · 已報名 22/30" tag="已確認" green/></div><SectionTitle>快捷工具</SectionTitle><GridMenu items={tools} routes={{培訓學院:6,AI成交陪跑:3}}/><button className="ai-float" onClick={()=>go(3)}><Sparkles size={18}/> AI</button></Phone>;
+  return <Phone nav={<BottomNav items={advisorNav} routes={{首頁:2,學院:6,業務:1,社群:5,我的:7}}/>}><Topbar title="陳小姐　·　鑽石顧問" subtitle="卓越團隊 · 家辦顧問" initial="陳"/><div className="kpi-card"><ProgressRing value={64}/><div className="kpi-copy"><small>本月業務目標</small><h2>HKD 3,200,000</h2><p>/ 5,000,000</p><div className="progress"><i style={{width:'64%'}}/></div><div className="mini-metrics"><span>新客戶 <b>48</b></span><span>有效面談 <b>31</b></span><span>成交 <b>7</b></span></div></div></div><SectionTitle more="全部">今日任務</SectionTitle><Suggestion compact><b>AI 建議：</b>優先跟進 5 位高意向客戶，其中 2 位計劃書已逾 3 天未回覆。</Suggestion><div className="list-card"><List icon={Headphones} title="跟進客戶 · 黃先生" sub="教育金規劃 · 二次面談" tag="進行中"/><List icon={FileCheck2} title="遞交計劃書 · 李太太" sub="高端醫療 + 儲蓄型組合" tag="待處理" gray/><List icon={CalendarDays} title="家辦財富傳承閉門會" sub="10月18日 · 中環 · 已報名 22/30" tag="已確認" green/></div><SectionTitle>快捷工具</SectionTitle><GridMenu items={tools} routes={{營銷工具:9,培訓學院:6,AI成交陪跑:3}}/><button className="ai-float" onClick={()=>go(3)}><Sparkles size={18}/> AI</button></Phone>;
 }
 
 function List({icon:Icon,title,sub,tag,gray=false,green=false,red=false}:{icon:IconType;title:string;sub:string;tag?:string;gray?:boolean;green?:boolean;red?:boolean}) { return <div className="list-row"><span className="list-icon"><Icon size={17}/></span><div><b>{title}</b><small>{sub}</small></div>{tag&&<Tag tone={green?'green':red?'red':gray?'gray':'purple'}>{tag}</Tag>}</div>; }
@@ -155,20 +155,20 @@ function AIAdCarousel() {
   };
   const ad=ads[slide];
   return <Phone dark><div className="ad-world">
-    <div className="ad-world-head"><span><Sparkles size={13}/> AA AI 廣告世界</span><button onClick={()=>go(0)}>跳過</button></div>
+    <div className="ad-world-head"><span><Sparkles size={13}/> AA AI 廣告世界</span><button onClick={()=>go(2)}>返回工作台</button></div>
     <div className="ad-intro"><p>SWIPE TO DISCOVER</p><h1>遇見你的 AI 家辦搭檔</h1><small>左右滑動，一張一張探索</small></div>
     <div className="ad-deck" onTouchStart={event=>touchStart.current=event.touches[0].clientX} onTouchEnd={event=>finishSwipe(event.changedTouches[0].clientX)}>
       <i className="ad-card-shadow shadow-one"/><i className="ad-card-shadow shadow-two"/>
       <article className="ad-card" key={ad.image} style={{backgroundImage:`url(${ad.image})`}}>
         <div className="ad-card-shade"/>
         <div className="ad-card-copy"><span>{ad.kicker}</span><h2>{ad.title}</h2><p>{ad.copy}</p></div>
-        <button className="ad-card-cta" onClick={()=>go(0)}>立即體驗 <ChevronRight size={14}/></button>
+        <button className="ad-card-cta" onClick={()=>go(3)}>AI 生成同款 <ChevronRight size={14}/></button>
       </article>
       <button aria-label="上一張" className="ad-arrow ad-arrow-left" onClick={()=>move(-1)}>‹</button>
       <button aria-label="下一張" className="ad-arrow ad-arrow-right" onClick={()=>move(1)}>›</button>
     </div>
     <div className="ad-dots">{ads.map((item,index)=><button aria-label={`第 ${index+1} 張`} className={index===slide?'active':''} onClick={()=>setSlide(index)} key={item.image}/>)}</div>
-    <button className="enter-system" onClick={()=>go(0)}><span><Sparkles size={15}/>進入 AA AI 家辦系統</span><ChevronRight size={16}/></button>
+    <button className="enter-system" onClick={()=>go(2)}><span><Sparkles size={15}/>返回顧問工作台</span><ChevronRight size={16}/></button>
   </div></Phone>;
 }
 
@@ -188,7 +188,7 @@ const screens:ScreenDef[]=[
 ];
 
 export default function HomePage(){
-  const [active,setActive]=useState(9);
+  const [active,setActive]=useState(0);
   const [history,setHistory]=useState<number[]>([]);
   const [toast,setToast]=useState('');
   const toastTimer=useRef<ReturnType<typeof setTimeout>|null>(null);

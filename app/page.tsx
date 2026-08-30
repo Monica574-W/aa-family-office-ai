@@ -158,13 +158,13 @@ function PointsTask({icon:Icon,title,sub,points,done=false}:{icon:IconType;title
 }
 
 function AIAdCarousel() {
-  const { go } = useApp();
+  const { go,theme } = useApp();
   const [slide,setSlide] = useState(0);
   const pointerStart = useRef<{x:number;id:number}|null>(null);
   const ads = [
-    { image:'ads/ai-advisor-v2.png', kicker:'AA AI FAMILY OFFICE', title:'你的 AI 家辦搭檔', copy:'讓每一位保險顧問，都擁有頂級家辦的專業能力' },
-    { image:'ads/client-insight-v2.png', kicker:'AI CLIENT INSIGHT', title:'AI 客戶洞察', copy:'從家庭目標出發，快速整理需求與下一步跟進方向' },
-    { image:'ads/family-legacy-v2.png', kicker:'FAMILY LEGACY', title:'讓專業陪伴每一代', copy:'把保障、財富與傳承，放進同一張家庭藍圖' },
+    { darkImage:'ads/ai-advisor-v2.png', lightImage:'ads/ai-advisor-day.png', kicker:'AA AI FAMILY OFFICE', title:'你的 AI 家辦搭檔', copy:'讓每一位保險顧問，都擁有頂級家辦的專業能力' },
+    { darkImage:'ads/client-insight-v2.png', lightImage:'ads/client-insight-day.png', kicker:'AI CLIENT INSIGHT', title:'AI 客戶洞察', copy:'從家庭目標出發，快速整理需求與下一步跟進方向' },
+    { darkImage:'ads/family-legacy-v2.png', lightImage:'ads/family-legacy-day.png', kicker:'FAMILY LEGACY', title:'讓專業陪伴每一代', copy:'把保障、財富與傳承，放進同一張家庭藍圖' },
   ];
   const move = (direction:number) => setSlide(current=>(current+direction+ads.length)%ads.length);
   const finishSwipe = (x:number) => {
@@ -174,12 +174,13 @@ function AIAdCarousel() {
     pointerStart.current=null;
   };
   const ad=ads[slide];
+  const adImage=theme==='light'?ad.lightImage:ad.darkImage;
   return <Phone dark channel nav={<BottomNav items={aiWorldNav} active={0} dark routes={aiWorldRoutes}/> }><div className="ad-world">
     <div className="ad-world-head"><span><Sparkles size={13}/> AA AI 世界</span><button onClick={()=>go(0)}>身份入口</button></div>
     <div className="ad-intro"><p>WELCOME TO THE AI WORLD</p><h1>進入 AA AI 世界</h1><small>遇見另一個你，左右拖動探索廣告內容</small></div>
     <div className="ad-deck" onPointerDown={event=>{pointerStart.current={x:event.clientX,id:event.pointerId};event.currentTarget.setPointerCapture(event.pointerId)}} onPointerUp={event=>finishSwipe(event.clientX)} onPointerCancel={()=>pointerStart.current=null}>
       <i className="ad-card-shadow shadow-one"/><i className="ad-card-shadow shadow-two"/>
-      <article className="ad-card" key={ad.image} style={{backgroundImage:`url(${ad.image})`}}>
+      <article className="ad-card" key={adImage} style={{backgroundImage:`url(${adImage})`}}>
         <div className="ad-card-shade"/>
         <div className="ad-card-copy"><span>{ad.kicker}</span><h2>{ad.title}</h2><p>{ad.copy}</p></div>
         <button className="ad-card-cta" onClick={()=>go(3)}>AI 生成同款 <ChevronRight size={14}/></button>
@@ -187,7 +188,7 @@ function AIAdCarousel() {
       <button aria-label="上一張" className="ad-arrow ad-arrow-left" onClick={()=>move(-1)}>‹</button>
       <button aria-label="下一張" className="ad-arrow ad-arrow-right" onClick={()=>move(1)}>›</button>
     </div>
-    <div className="ad-dots">{ads.map((item,index)=><button aria-label={`第 ${index+1} 張`} className={index===slide?'active':''} onClick={()=>setSlide(index)} key={item.image}/>)}</div>
+    <div className="ad-dots">{ads.map((item,index)=><button aria-label={`第 ${index+1} 張`} className={index===slide?'active':''} onClick={()=>setSlide(index)} key={item.darkImage}/>)}</div>
   </div></Phone>;
 }
 
@@ -210,8 +211,15 @@ const screens:ScreenDef[]=[
 ];
 
 export default function HomePage(){
-  const [active,setActive]=useState(9);
-  const [theme,setTheme]=useState<ThemeMode>('dark');
+  const [active,setActive]=useState(()=>{
+    if(typeof window==='undefined')return 9;
+    const requested=Number(new URLSearchParams(window.location.search).get('screen'));
+    return Number.isInteger(requested)&&requested>=0&&requested<screens.length?requested:9;
+  });
+  const [theme,setTheme]=useState<ThemeMode>(()=>{
+    if(typeof window==='undefined')return 'dark';
+    return new URLSearchParams(window.location.search).get('theme')==='light'?'light':'dark';
+  });
   const [history,setHistory]=useState<number[]>([]);
   const [toast,setToast]=useState('');
   const toastTimer=useRef<ReturnType<typeof setTimeout>|null>(null);

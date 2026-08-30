@@ -54,14 +54,14 @@ function BottomNav({ items, active=0, dark=false, routes={} }:{ items:[IconType,
   return <footer className={`bottom-nav ${dark?'bottom-dark':''}`}>{items.map(([Icon,label],i)=><button className={i===active?'active':''} onClick={()=>routes[label]!==undefined?go(routes[label]):notify(`${label}：演示入口已响应`)} key={label}><Icon size={18}/><small>{label}</small></button>)}</footer>;
 }
 
-function Phone({ children, dark=false, nav }:{ children:ReactNode; dark?:boolean; nav?:ReactNode }) {
-  return <div className={`phone-frame ${dark?'dark-screen':'light-screen'}`}><div className="island"/><StatusBar/><div className={`phone-scroll ${nav?'with-nav':''}`}>{children}</div>{nav}</div>;
+function Phone({ children, dark=false, channel=false, nav }:{ children:ReactNode; dark?:boolean; channel?:boolean; nav?:ReactNode }) {
+  return <div className={`phone-frame ${dark?'dark-screen':'light-screen'} ${channel?'ai-channel-frame':''}`}><div className="island"/><StatusBar/><div className={`phone-scroll ${nav?'with-nav':''}`}>{children}</div>{nav}</div>;
 }
 
 const companyNav:[IconType,string][]=[[Home,'首頁'],[FolderKanban,'平台'],[TrendingUp,'業務'],[Sparkles,'AI助手'],[UserRound,'我的']];
 const advisorNav:[IconType,string][]=[[Home,'首頁'],[GraduationCap,'學院'],[TrendingUp,'業務'],[UsersRound,'社群'],[UserRound,'我的']];
-const aiNav:[IconType,string][]=[[Home,'首頁'],[MessageCircleMore,'AI陪伴'],[FolderKanban,'工作台'],[PackageSearch,'AI商城'],[UserRound,'我的']];
 const aiWorldNav:[IconType,string][]=[[Sparkles,'AI世界'],[MessageCircleMore,'AI陪伴'],[PackageSearch,'AI工具'],[Gift,'AI商城'],[UserRound,'我的']];
+const aiWorldRoutes:Record<string,number>={AI世界:9,AI陪伴:3,AI工具:10,AI商城:11,我的:12};
 
 function IdentityScreen() {
   const { go } = useApp();
@@ -95,7 +95,22 @@ function List({icon:Icon,title,sub,tag,gray=false,green=false,red=false}:{icon:I
 function AICompanion() {
   const { notify } = useApp();
   const tools:[IconType,string][]=[[Activity,'AI客戶診斷'],[PackageSearch,'AI產品建議'],[MessageCircleMore,'AI話術教練'],[Target,'AI招募陪跑'],[CalendarDays,'AI活動策劃'],[TrendingUp,'AI成交復盤'],[FileText,'AI合約問答'],[BarChart3,'AI週報生成']];
-  return <Phone dark nav={<BottomNav items={aiNav} active={1} dark routes={{首頁:2,AI陪伴:3,工作台:1,AI商城:6,我的:7}}/>}><Topbar dark title="早上好，陳小姐" subtitle="今天是你的 AI 家辦陪跑日" initial="陳"/><div className="ai-hero"><Halo large label="AI"/><h2>你的今日陪跑計劃已就緒</h2><p>已綜合客戶、招募、活動與合約進度</p></div><SectionTitle>AI 今日建議</SectionTitle><Suggestion action="立即跟進">今日應跟進 <b>8 位客戶</b>，其中 2 位計劃書已超過 3 天未回覆</Suggestion><Suggestion action="安排面談"><b>3 個招募候選人</b>需要二次面談，建議本週內完成</Suggestion><Suggestion action="生成文案">本週活動報名率 <b>68%</b>，建議發布 2 條內容催谷報名</Suggestion><SectionTitle>AI 工具</SectionTitle><GridMenu items={tools}/><button className="primary-ai" onClick={()=>notify('今日 AI 陪跑流程已启动')}><Sparkles size={17}/>開始今日 AI 陪跑</button></Phone>;
+  return <Phone dark channel nav={<BottomNav items={aiWorldNav} active={1} dark routes={aiWorldRoutes}/> }><Topbar dark title="早上好，陳小姐" subtitle="今天是你的 AI 家辦陪跑日" initial="陳"/><div className="ai-hero"><Halo large label="AI"/><h2>你的今日陪跑計劃已就緒</h2><p>已綜合客戶、招募、活動與合約進度</p></div><SectionTitle>AI 今日建議</SectionTitle><Suggestion action="立即跟進">今日應跟進 <b>8 位客戶</b>，其中 2 位計劃書已超過 3 天未回覆</Suggestion><Suggestion action="安排面談"><b>3 個招募候選人</b>需要二次面談，建議本週內完成</Suggestion><Suggestion action="生成文案">本週活動報名率 <b>68%</b>，建議發布 2 條內容催谷報名</Suggestion><SectionTitle>AI 工具</SectionTitle><GridMenu items={tools}/><button className="primary-ai" onClick={()=>notify('今日 AI 陪跑流程已启动')}><Sparkles size={17}/>開始今日 AI 陪跑</button></Phone>;
+}
+
+function AIWorldTools() {
+  const tools:[IconType,string][]=[[Activity,'客戶需求診斷'],[PieChart,'保障缺口分析'],[PackageSearch,'產品智能對比'],[FileCheck2,'計劃書生成'],[MessageCircleMore,'溝通話術教練'],[Megaphone,'廣告內容生成'],[CalendarDays,'活動策劃助手'],[BarChart3,'業務復盤報告']];
+  return <Phone dark channel nav={<BottomNav items={aiWorldNav} active={2} dark routes={aiWorldRoutes}/> }><Topbar dark simple title="AI 工具中心"/><div className="channel-hero"><Sparkles size={25}/><p>SMART TOOLKIT</p><h2>讓每一步工作都有 AI 加速</h2><small>客戶、產品、內容與成交工具集中管理</small></div><SectionTitle>常用工具</SectionTitle><GridMenu items={tools} columns={4}/><SectionTitle>最近使用</SectionTitle><div className="list-card"><List icon={Activity} title="黃先生 · 家庭保障診斷" sub="2 小時前更新 · 完成度 86%" tag="繼續"/><List icon={FileCheck2} title="李太太 · 儲蓄計劃書" sub="昨天生成 · 等待顧問確認" tag="草稿" gray/><List icon={Megaphone} title="家辦閉門會宣傳素材" sub="已生成 3 個社交媒體版本" tag="已完成" green/></div></Phone>;
+}
+
+function AIWorldShop() {
+  const { notify } = useApp();
+  return <Phone dark channel nav={<BottomNav items={aiWorldNav} active={3} dark routes={aiWorldRoutes}/> }><Topbar dark simple title="AI 商城"/><div className="channel-hero shop"><Gift size={25}/><p>AI MARKETPLACE</p><h2>精選家辦 AI 能力包</h2><small>按需要擴展你的顧問工作能力</small></div><div className="tabs"><b>熱門推薦</b><span>顧問工具</span><span>內容模板</span><span>會員權益</span></div><div className="shop-grid"><button onClick={()=>notify('客戶洞察 Pro：已加入體驗清單')}><Activity size={22}/><b>客戶洞察 Pro</b><small>深度家庭需求分析</small><Tag tone="purple">熱門</Tag></button><button onClick={()=>notify('成交話術庫：已加入體驗清單')}><MessageCircleMore size={22}/><b>成交話術庫</b><small>高淨值場景演練</small><Tag tone="gold">VIP</Tag></button><button onClick={()=>notify('廣告創作包：已加入體驗清單')}><Megaphone size={22}/><b>廣告創作包</b><small>一鍵生成社交素材</small><Tag tone="green">新上架</Tag></button><button onClick={()=>notify('家辦報告模板：已加入體驗清單')}><FileText size={22}/><b>家辦報告模板</b><small>專業提案快速成稿</small><Tag tone="gray">模板</Tag></button></div></Phone>;
+}
+
+function AIWorldProfile() {
+  const { go } = useApp();
+  return <Phone dark channel nav={<BottomNav items={aiWorldNav} active={4} dark routes={aiWorldRoutes}/> }><div className="member-top"><b>我的 AI 世界</b><Settings2 size={18}/></div><div className="vip-card"><div className="vip-head"><div><b>陳小姐</b><small>AA AI CREATOR · 0728</small></div><Tag tone="gold">DIAMOND</Tag></div><h2>本月已用 AI 節省 18.6 小時</h2><p>連續使用 12 天 · 已完成 46 項 AI 任務</p><div className="vip-actions"><button onClick={()=>go(8)}>每日打卡</button><button onClick={()=>go(0)}>切換身份</button></div><Gem size={104}/></div><SectionTitle>我的數據</SectionTitle><div className="data-grid"><Data num="36" label="創作"/><Data num="18" label="診斷"/><Data num="12" label="計劃書"/><Data num="1,280" label="積分"/></div><SectionTitle>我的內容</SectionTitle><div className="dark-list"><DarkRow icon={Star} label="我的收藏"/><DarkRow icon={FolderKanban} label="創作記錄"/><DarkRow icon={Gift} label="已購能力包"/><DarkRow icon={Headphones} label="幫助與客服"/></div></Phone>;
 }
 
 function InternalManagement() {
@@ -143,9 +158,9 @@ function AIAdCarousel() {
   const [slide,setSlide] = useState(0);
   const pointerStart = useRef<{x:number;id:number}|null>(null);
   const ads = [
-    { image:'/ads/xiao-a-family-office.jpg', kicker:'AA AI FAMILY OFFICE', title:'小A家辦', copy:'讓每一位保險顧問，都擁有頂級家辦的專業能力' },
-    { image:'/ads/ai-insight.png', kicker:'AI CLIENT INSIGHT', title:'AI 客戶洞察', copy:'從家庭目標出發，快速整理需求與下一步跟進方向' },
-    { image:'/ads/family-legacy.png', kicker:'FAMILY LEGACY', title:'讓專業陪伴每一代', copy:'把保障、財富與傳承，放進同一張家庭藍圖' },
+    { image:'ads/ai-advisor-v2.png', kicker:'AA AI FAMILY OFFICE', title:'你的 AI 家辦搭檔', copy:'讓每一位保險顧問，都擁有頂級家辦的專業能力' },
+    { image:'ads/client-insight-v2.png', kicker:'AI CLIENT INSIGHT', title:'AI 客戶洞察', copy:'從家庭目標出發，快速整理需求與下一步跟進方向' },
+    { image:'ads/family-legacy-v2.png', kicker:'FAMILY LEGACY', title:'讓專業陪伴每一代', copy:'把保障、財富與傳承，放進同一張家庭藍圖' },
   ];
   const move = (direction:number) => setSlide(current=>(current+direction+ads.length)%ads.length);
   const finishSwipe = (x:number) => {
@@ -155,7 +170,7 @@ function AIAdCarousel() {
     pointerStart.current=null;
   };
   const ad=ads[slide];
-  return <Phone dark nav={<BottomNav items={aiWorldNav} active={0} dark routes={{AI世界:9,AI陪伴:3,AI工具:2,AI商城:6,我的:7}}/>}><div className="ad-world">
+  return <Phone dark channel nav={<BottomNav items={aiWorldNav} active={0} dark routes={aiWorldRoutes}/> }><div className="ad-world">
     <div className="ad-world-head"><span><Sparkles size={13}/> AA AI 世界</span><button onClick={()=>go(0)}>身份入口</button></div>
     <div className="ad-intro"><p>WELCOME TO THE AI WORLD</p><h1>進入 AA AI 世界</h1><small>遇見另一個你，左右拖動探索廣告內容</small></div>
     <div className="ad-deck" onPointerDown={event=>{pointerStart.current={x:event.clientX,id:event.pointerId};event.currentTarget.setPointerCapture(event.pointerId)}} onPointerUp={event=>finishSwipe(event.clientX)} onPointerCancel={()=>pointerStart.current=null}>
@@ -185,6 +200,9 @@ const screens:ScreenDef[]=[
   { title:'會員中心', eyebrow:'MEMBER EXPERIENCE', mode:'dark', component:MemberCenter },
   { title:'每日打卡積分', eyebrow:'DAILY REWARDS', mode:'light', component:DailyCheckIn },
   { title:'AI 廣告世界', eyebrow:'OPENING CAMPAIGN', mode:'dark', component:AIAdCarousel },
+  { title:'AI 工具中心', eyebrow:'SMART TOOLKIT', mode:'dark', component:AIWorldTools },
+  { title:'AI 商城', eyebrow:'AI MARKETPLACE', mode:'dark', component:AIWorldShop },
+  { title:'我的 AI 世界', eyebrow:'CREATOR PROFILE', mode:'dark', component:AIWorldProfile },
 ];
 
 export default function HomePage(){
@@ -196,6 +214,7 @@ export default function HomePage(){
   const go=(target:number)=>{if(target===active)return;setHistory(items=>[...items,active]);setActive(target);};
   const back=()=>setHistory(items=>{if(!items.length){setActive(0);return items;}const next=[...items];setActive(next.pop()??0);return next;});
   const notify=(message:string)=>{setToast(message);if(toastTimer.current)clearTimeout(toastTimer.current);toastTimer.current=setTimeout(()=>setToast(''),1800);};
-  const isEntry=active===0||active===9;
-  return <AppContext.Provider value={{go,notify}}><main className={`prototype-app ${active===9?'ad-opening':''}`}><div className="prototype-brand"><span className="brand-mark"><Sparkles size={17}/></span><div><b>AA AI 家辦超級工作台</b><small>可點擊演示原型 · 所有資料均為示例</small></div></div><section className="prototype-stage"><div className={`prototype-controls ${isEntry?'entry':''}`}>{!isEntry&&<button onClick={back}>‹ 返回</button>}{!isEntry&&<button onClick={()=>{setHistory([]);setActive(0)}}>切換身份</button>}</div><Screen/>{toast&&<div className="prototype-toast"><Check size={14}/>{toast}</div>}</section><p className="prototype-tip">左右滑動廣告卡片，或進入系統點擊各個功能體驗流程</p></main></AppContext.Provider>;
+  const isAIWorld=[3,9,10,11,12].includes(active);
+  const isEntry=active===0||isAIWorld;
+  return <AppContext.Provider value={{go,notify}}><main className={`prototype-app ${isAIWorld?'ad-opening':''}`}><div className="prototype-brand"><span className="brand-mark"><Sparkles size={17}/></span><div><b>{isAIWorld?'AA AI 世界':'AA AI 家辦超級工作台'}</b><small>{isAIWorld?'廣告 · 陪伴 · 工具 · 商城':'可點擊演示原型 · 所有資料均為示例'}</small></div></div><section className="prototype-stage"><div className={`prototype-controls ${isEntry?'entry':''}`}>{!isEntry&&<button onClick={back}>‹ 返回</button>}{!isEntry&&<button onClick={()=>{setHistory([]);setActive(0)}}>切換身份</button>}</div><Screen/>{toast&&<div className="prototype-toast"><Check size={14}/>{toast}</div>}</section><p className="prototype-tip">AA AI 世界五個頻道保持固定，左右滑動廣告卡片探索內容</p></main></AppContext.Provider>;
 }

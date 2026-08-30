@@ -7,20 +7,24 @@ import {
   Cloud, Coins, FileCheck2, FileText, Flame, FolderKanban, Gem, Gift, GraduationCap, Headphones,
   HeartHandshake, Home, Landmark, LockKeyhole, Megaphone, MessageCircleMore,
   PackageSearch, PieChart, Search, Settings2, ShieldCheck, Sparkles, Star,
-  Target, TrendingUp, UserRound, UserRoundPlus, UsersRound, WalletCards,
+  Sun, Moon, Target, TrendingUp, UserRound, UserRoundPlus, UsersRound, WalletCards,
 } from 'lucide-react';
 
 type IconType = typeof Home;
 type ScreenDef = { title:string; eyebrow:string; mode:'light'|'dark'; component:() => ReactNode };
-type AppActions = { go:(target:number)=>void; notify:(message:string)=>void };
-const AppContext = createContext<AppActions>({ go:()=>undefined, notify:()=>undefined });
+type ThemeMode = 'dark'|'light';
+type AppActions = { go:(target:number)=>void; notify:(message:string)=>void; theme:ThemeMode; toggleTheme:()=>void };
+const AppContext = createContext<AppActions>({ go:()=>undefined, notify:()=>undefined, theme:'dark', toggleTheme:()=>undefined });
 const useApp = () => useContext(AppContext);
 
 function Halo({ large=false, label='AI' }:{ large?:boolean; label?:string }) {
   return <span className={`halo ${large?'halo-large':'halo-small'}`}><span>{label}</span></span>;
 }
 
-function StatusBar() { return <div className="status-row"><span>9:41</span><span className="status-icons">●●●&nbsp; 5G&nbsp; ▰</span></div>; }
+function StatusBar() {
+  const { theme,toggleTheme } = useApp();
+  return <div className="status-row"><span>9:41</span><span className="status-right"><button className="status-theme" aria-label={theme==='dark'?'切換白天模式':'切換夜間模式'} onClick={toggleTheme}>{theme==='dark'?<Sun size={12}/>:<Moon size={12}/>}</button><span className="status-icons">●●●&nbsp; 5G&nbsp; ▰</span></span></div>;
+}
 
 function Avatar({ children, dark=false }:{ children:ReactNode; dark?:boolean }) {
   return <span className={`avatar ${dark?'avatar-ai':''}`}>{children}</span>;
@@ -207,6 +211,7 @@ const screens:ScreenDef[]=[
 
 export default function HomePage(){
   const [active,setActive]=useState(9);
+  const [theme,setTheme]=useState<ThemeMode>('dark');
   const [history,setHistory]=useState<number[]>([]);
   const [toast,setToast]=useState('');
   const toastTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
@@ -214,7 +219,8 @@ export default function HomePage(){
   const go=(target:number)=>{if(target===active)return;setHistory(items=>[...items,active]);setActive(target);};
   const back=()=>setHistory(items=>{if(!items.length){setActive(0);return items;}const next=[...items];setActive(next.pop()??0);return next;});
   const notify=(message:string)=>{setToast(message);if(toastTimer.current)clearTimeout(toastTimer.current);toastTimer.current=setTimeout(()=>setToast(''),1800);};
+  const toggleTheme=()=>setTheme(current=>current==='dark'?'light':'dark');
   const isAIWorld=[3,9,10,11,12].includes(active);
   const isEntry=active===0||isAIWorld;
-  return <AppContext.Provider value={{go,notify}}><main className={`prototype-app ${isAIWorld?'ad-opening':''}`}><div className="prototype-brand"><span className="brand-mark"><Sparkles size={17}/></span><div><b>{isAIWorld?'AA AI 世界':'AA AI 家辦超級工作台'}</b><small>{isAIWorld?'廣告 · 陪伴 · 工具 · 商城':'可點擊演示原型 · 所有資料均為示例'}</small></div></div><section className="prototype-stage"><div className={`prototype-controls ${isEntry?'entry':''}`}>{!isEntry&&<button onClick={back}>‹ 返回</button>}{!isEntry&&<button onClick={()=>{setHistory([]);setActive(0)}}>切換身份</button>}</div><Screen/>{toast&&<div className="prototype-toast"><Check size={14}/>{toast}</div>}</section><p className="prototype-tip">AA AI 世界五個頻道保持固定，左右滑動廣告卡片探索內容</p></main></AppContext.Provider>;
+  return <AppContext.Provider value={{go,notify,theme,toggleTheme}}><main className={`prototype-app theme-${theme} ${isAIWorld?'ad-opening':''}`}><div className="prototype-brand"><span className="brand-mark"><Sparkles size={17}/></span><div><b>{isAIWorld?'AA AI 世界':'AA AI 家辦超級工作台'}</b><small>{isAIWorld?'廣告 · 陪伴 · 工具 · 商城':'可點擊演示原型 · 所有資料均為示例'}</small></div></div><section className="prototype-stage"><div className={`prototype-controls ${isEntry?'entry':''}`}>{!isEntry&&<button onClick={back}>‹ 返回</button>}{!isEntry&&<button onClick={()=>{setHistory([]);setActive(0)}}>切換身份</button>}</div><Screen/>{toast&&<div className="prototype-toast"><Check size={14}/>{toast}</div>}</section><p className="prototype-tip">點擊狀態欄太陽 / 月亮切換全局日夜模式</p></main></AppContext.Provider>;
 }

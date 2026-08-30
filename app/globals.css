@@ -16,3 +16,21 @@
 .grid-option{border:0;background:transparent;color:inherit;font:inherit;padding:0;cursor:pointer}.grid-option:active .grid-icon{transform:scale(.93)}.grid-icon{transition:transform .15s ease}.role-card{width:100%;color:inherit;font:inherit;text-align:left;cursor:pointer}.role-card:active{transform:scale(.985)}.bottom-nav>button{border:0;background:transparent;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;color:#9a9ead;cursor:pointer}.bottom-nav>button.active{color:var(--violet);font-weight:700}.bottom-nav.bottom-dark>button{color:#61697e}.bottom-nav.bottom-dark>button.active{color:#a88eff}.dark-link{width:100%;color:inherit;text-align:left;cursor:pointer}.dark-link:active{transform:scale(.99)}
 @media(max-height:930px) and (min-width:761px){.prototype-app{justify-content:flex-start;padding-top:60px}.prototype-tip{display:none}}
 @media(max-width:760px){.review-shell{display:block}.review-rail,.canvas-head,.page-count,.prototype-brand,.prototype-tip{display:none}.canvas{min-height:100svh;padding:0;justify-content:center}.prototype-app{display:block;padding:0;min-height:100svh;background:#080a11}.prototype-stage{min-height:100svh}.prototype-controls{position:fixed;top:49px;left:0;transform:none;width:100%;padding:0 12px;pointer-events:none}.prototype-controls button{pointer-events:auto;background:rgba(10,13,24,.72);backdrop-filter:blur(10px);border-color:rgba(255,255,255,.1);color:#c6cad6}.phone-frame{width:100%;height:100svh;max-height:none;border:0;border-radius:0}.phone-scroll{padding-left:max(18px,env(safe-area-inset-left));padding-right:max(18px,env(safe-area-inset-right))}.prototype-toast{position:fixed;bottom:88px}.dark-screen .prototype-controls button{color:#fff}}
+
+/* Unified light visual language for every app route */
+.prototype-app{background:radial-gradient(circle at 50% 0,rgba(124,92,252,.11),transparent 34%),#eceef4;color:var(--text)}
+.prototype-brand b{color:var(--text)}.prototype-brand small,.prototype-tip{color:#7d8495}
+.prototype-controls button{border-color:#ddd9ef;background:rgba(255,255,255,.86);color:var(--violet-dark);box-shadow:0 4px 14px rgba(45,37,88,.07)}
+.prototype-controls button:hover{background:var(--violet-soft);color:var(--violet-dark)}
+.dark-screen{background:var(--paper);color:var(--text)}.dark-screen .phone-scroll{color:var(--text)}.dark-screen .status-row,.dark-screen .user-line b,.dark-screen .member-top b{color:var(--text)}
+.dark-screen .user-line small,.dark-screen .top-actions,.dark-screen .section-title>span{color:var(--muted)}
+.dark-screen .halo:before{background:#fff}.dark-screen .halo>span{color:var(--violet-dark)}
+.dark-screen .identity-hero .kicker{color:#8b80bd}.dark-screen .identity-hero h2{color:var(--text)}.dark-screen .identity-hero>p:last-child{color:var(--muted)}
+.dark-screen .role-card{border-color:#e6e1f8;background:#fff;color:var(--text);box-shadow:0 4px 16px rgba(35,28,65,.045)}.dark-screen .role-card p{color:var(--muted)}.dark-screen .role-card>svg{color:#9a91b5}.dark-screen .remember{color:#8a90a0}
+.dark-screen .suggestion{background:var(--violet-soft);border-color:#e5ddff}.dark-screen .suggestion-copy{color:#4d5262}.dark-screen .suggestion button{color:var(--violet-dark);background:#e2d9ff}
+.dark-screen .grid-icon{background:var(--violet-soft);border-color:#e5ddff;color:var(--violet-dark)}.dark-screen .grid-option small{color:#4f5564}
+.bottom-nav.bottom-dark{background:rgba(255,255,255,.98);border-top-color:#e9eaf0}.bottom-nav.bottom-dark>button{color:#9a9ead}.bottom-nav.bottom-dark>button.active{color:var(--violet)}
+.dark-screen .ai-hero h2{color:var(--text)}.dark-screen .ai-hero p{color:var(--muted)}
+.dark-screen .vip-card{color:#fff}.dark-screen .vip-card .vip-head b{color:#fff}
+.dark-screen .dark-link,.dark-screen .dark-list{border-color:#e8e5f1;background:#fff;color:var(--text);box-shadow:0 3px 12px rgba(25,28,42,.03)}.dark-screen .dark-list>div{border-bottom-color:#eff0f3}.dark-screen .dark-link small{color:var(--muted)}
+@media(max-width:760px){.prototype-app{background:var(--paper)}.prototype-controls button{background:rgba(255,255,255,.9);border-color:#e2deef;color:var(--violet-dark)}.dark-screen .prototype-controls button{color:var(--violet-dark)}}

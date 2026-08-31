@@ -213,12 +213,12 @@ const screens:ScreenDef[]=[
 export default function HomePage(){
   const [active,setActive]=useState(()=>{
     if(typeof window==='undefined')return 9;
-    const requested=Number(new URLSearchParams(window.location.search).get('screen'));
+    const requested=Number(new URLSearchParams(window.location.search).get('screen')??9);
     return Number.isInteger(requested)&&requested>=0&&requested<screens.length?requested:9;
   });
   const [theme,setTheme]=useState<ThemeMode>(()=>{
-    if(typeof window==='undefined')return 'dark';
-    return new URLSearchParams(window.location.search).get('theme')==='light'?'light':'dark';
+    if(typeof window==='undefined')return 'light';
+    return new URLSearchParams(window.location.search).get('theme')==='dark'?'dark':'light';
   });
   const [history,setHistory]=useState<number[]>([]);
   const [toast,setToast]=useState('');
